@@ -1,3 +1,5 @@
+import { ICreateClientBody } from '../interfaces/client.interface';
+
 export async function getAllClients() {
   try {
     const clients = [
@@ -8,6 +10,16 @@ export async function getAllClients() {
     ];
 
     return clients;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export async function createClient(body: ICreateClientBody) {
+  try {
+    // Criar cliente
+
+    return true;
   } catch (error: any) {
     throw error;
   }
