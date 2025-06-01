@@ -6,6 +6,7 @@ export async function getAllClients() {
     SELECT
       c.name,
       c.email,
+      TO_CHAR(c.birth_date, 'YYYY-MM-DD') AS "birthDate",
       c.is_active AS "isActive",
       c.created_at AS "createdAt",
       c.updated_at AS "updatedAt",

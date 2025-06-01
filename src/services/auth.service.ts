@@ -15,7 +15,11 @@ export async function login(body: ILoginBody) {
     };
 
     if (email !== mockClient.email || password !== mockClient.password) {
-      throw { statusCode: 401, message: 'E-mail ou senha inválidos' };
+      throw  {
+        statusCode: 401,
+        message: 'E-mail ou senha inválidos',
+        code: 'invalid_email_or_password'
+      };
     }
 
     const token = {
