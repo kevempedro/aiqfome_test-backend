@@ -7,7 +7,7 @@ export async function getAllClients(request: FastifyRequest, response: FastifyRe
   try {
     const clients = await clientService.getAllClients();
 
-    return response.status(200).send({ clients });
+    return response.status(200).send(clients);
   } catch (error: any) {
     return response.status(500).send({ error: error.message });
   }
