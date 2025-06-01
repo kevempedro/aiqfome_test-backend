@@ -1,4 +1,12 @@
 export const createClientSchema = {
+  headers: {
+    type: 'object',
+    required: ['authorization'],
+    properties: {
+      authorization: { type: 'string' }
+    }
+  },
+
   body: {
     type: 'object',
     required: ['name', 'email', 'password'],
@@ -23,12 +31,15 @@ export const createClientSchema = {
       }
     }
   },
+
   response: {
      201: {
-      type: 'null'
+      type: 'null',
+      description: "OK",
     },
     500: {
       type: 'object',
+      description: "Internal Server Error",
       properties: {
         error: { type: 'string' }
       }

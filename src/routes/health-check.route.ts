@@ -9,4 +9,4 @@ export default function routes(fastify: FastifyInstance) {
     },
     () => { return 'API IS RUNNING!!!'; }
   );
-}
+};
