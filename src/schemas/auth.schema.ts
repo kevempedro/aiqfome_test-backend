@@ -1,3 +1,5 @@
+import { commonResponseSchema } from './common-response.schema';
+
 export const loginSchema = {
   body: {
     type: 'object',
@@ -16,19 +18,6 @@ export const loginSchema = {
         token: { type: 'string' }
       }
     },
-    401: {
-      type: 'object',
-      description: "Unauthorized",
-      properties: {
-        error: { type: 'string' }
-      }
-    },
-    500: {
-      type: 'object',
-      description: "Internal Server Error",
-      properties: {
-        error: { type: 'string' }
-      }
-    }
+   ...commonResponseSchema
   }
 };

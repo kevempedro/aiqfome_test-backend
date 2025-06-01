@@ -5,7 +5,7 @@ import * as authService from '../services/auth.service';
 
 export async function login(request: FastifyRequest<{ Body: ILoginBody }>, response: FastifyReply) {
   try {
-    const { email, password } = request.body
+    const { email, password } = request.body;
 
     const authData = await authService.login({ email, password });
 
@@ -22,8 +22,15 @@ export async function login(request: FastifyRequest<{ Body: ILoginBody }>, respo
 
     return response.status(200).send({ token });
   } catch (error: any) {
-    const { statusCode } = error;
+    const {
+      statusCode,
+      message,
+      code
+    } = error;
 
-    return response.status(statusCode || 500).send({ error: error.message });
+    return response.status(statusCode || 500).send({
+      message: message || 'Erro interno no servidor',
+      code: code || 'internal_server_error',
+    });
   }
 };
