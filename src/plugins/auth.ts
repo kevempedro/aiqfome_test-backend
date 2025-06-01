@@ -10,7 +10,7 @@ declare module "fastify" {
   interface FastifyInstance {
     authenticate: (request: FastifyRequest, response: FastifyReply) => Promise<void>;
   }
-}
+};
 
 const authPlugin: FastifyPluginAsync = async (fastify) => {
   fastify.register(

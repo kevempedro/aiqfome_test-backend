@@ -1,15 +1,14 @@
 import { ICreateClientBody } from '../interfaces/client.interface';
+import * as clientModel from '../models/client.model';
 
 export async function getAllClients() {
   try {
-    const clients = [
-      {
-        name: 'Kevem Lima',
-        email: 'kevem@gmail.com'
-      }
-    ];
+    const { clients, totalCount } = await clientModel.getAllClients();
 
-    return clients;
+    return {
+      clients,
+      totalCount
+    };
   } catch (error: any) {
     throw error;
   }
