@@ -9,6 +9,22 @@ export const getAllClientsSchema = {
     }
   },
 
+  querystring: {
+    type: 'object',
+    required: ['page', 'perPage'],
+    properties: {
+      search: { type: 'string' },
+      page: {
+        type: 'number',
+        minimum: 1
+      },
+      perPage: {
+        type: 'number',
+        enum: [10, 20, 30, 40, 50]
+      },
+    },
+  },
+
   response: {
     200: {
       type: 'object',
@@ -19,6 +35,7 @@ export const getAllClientsSchema = {
           items: {
             type: 'object',
             properties: {
+              id: { type: 'number' },
               name: { type: 'string' },
               email: { type: 'string' },
               birthDate: { type: ['string', 'null'] },
@@ -64,7 +81,7 @@ export const createClientSchema = {
         maxLength: 100
       },
       birthDate: {
-        type: 'string',
+        type: ['string', 'null'],
         format: 'date'
       }
     }
@@ -73,7 +90,7 @@ export const createClientSchema = {
   response: {
     201: {
       type: 'null',
-      description: "OK",
+      description: "Created",
     },
     ...commonResponseSchema
   }

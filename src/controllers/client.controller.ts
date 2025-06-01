@@ -1,11 +1,21 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 
-import { ICreateClientBody } from '../interfaces/client.interface';
+import { IGetAllClientsQuery, ICreateClientBody } from '../interfaces/client.interface';
 import * as clientService from '../services/client.service';
 
-export async function getAllClients(request: FastifyRequest, response: FastifyReply) {
+export async function getAllClients(request: FastifyRequest<{ Querystring: IGetAllClientsQuery }>, response: FastifyReply) {
   try {
-    const clients = await clientService.getAllClients();
+    const {
+      search,
+      page,
+      perPage
+    } = request.query;
+
+    const clients = await clientService.getAllClients({
+      search,
+      page,
+      perPage
+    });
 
     return response.status(200).send(clients);
   } catch (error: any) {
