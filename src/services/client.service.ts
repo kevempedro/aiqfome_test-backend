@@ -1,5 +1,10 @@
+import bcrypt from 'bcrypt';
+
 import { IGetAllClientsQuery, ICreateClientBody } from '../interfaces/client.interface';
+import validEmail from '../utils/valid-email.util';
+import validPassword from '../utils/valid-passowrd.util';
 import * as clientModel from '../models/client.model';
+
 
 export async function getAllClients(query: IGetAllClientsQuery) {
   try {
@@ -16,7 +21,28 @@ export async function getAllClients(query: IGetAllClientsQuery) {
 
 export async function createClient(body: ICreateClientBody) {
   try {
-    const { email } = body;
+    const {
+      name,
+      email,
+      password,
+      birthDate
+    } = body;
+
+    if (!validEmail(email)) {
+      throw {
+        statusCode: 400,
+        message: 'E-mail inválido',
+        code: 'client_email_invalid'
+      };
+    }
+
+    if (!validPassword(password)) {
+      throw {
+        statusCode: 400,
+        message: 'Sua senha deve conter pelo menos 6 caracteres e ter pelo menos uma letra minúscula, uma letra maiúscula, um número e um caractere especial (!@#$%&*)',
+        code: 'client_password_weak'
+      };
+    }
 
     const emailAlreadyExists = await clientModel.getClientByEmail(email);
 
@@ -28,9 +54,15 @@ export async function createClient(body: ICreateClientBody) {
       };
     }
 
-    await clientModel.createClient(body);
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    return true;
+    await clientModel.createClient({
+      name,
+      email,
+      password: hashedPassword,
+      birthDate
+    });
   } catch (error: any) {
     throw error;
   }
