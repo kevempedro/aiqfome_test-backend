@@ -5,6 +5,7 @@ import {
   getClientByIdSchema,
   createClientSchema,
   updateClientSchema,
+  updateClientStatusSchema,
   deleteClientSchema
 } from '../schemas/client.schema'
 import * as clientController from '../controllers/client.controller';
@@ -55,6 +56,18 @@ export default async function routes(fastify: FastifyInstance) {
       },
       preHandler: fastify.authenticate,
       handler: clientController.updateClient
+    }
+  );
+
+  fastify.put('/change-status/:id',
+    {
+      schema: {
+        tags: ['Clientes'],
+        summary: 'Atualiza o status de um cliente pelo seu id',
+        ...updateClientStatusSchema
+      },
+      preHandler: fastify.authenticate,
+      handler: clientController.updateClientStatus
     }
   );
 

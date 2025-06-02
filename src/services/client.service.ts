@@ -76,7 +76,7 @@ export async function createClient(body: ICreateClientBody) {
   }
 };
 
-export async function updateClient(body: IUpdateClientBody, id: number) {
+export async function updateClient(id: number, body: IUpdateClientBody) {
   try {
     const {
       name,
@@ -93,13 +93,31 @@ export async function updateClient(body: IUpdateClientBody, id: number) {
     }
 
     await clientModel.updateClient(
+      id,
       {
         name,
         email,
         birthDate
-      },
-      id
+      }
     );
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export async function updateClientStatus(id: number, status: boolean) {
+  try {
+    const { isActive } = await getClientById(id);
+
+    if (isActive === status) {
+      throw {
+        statusCode: 400,
+        message: `Cliente já está ${isActive ? 'ativo(a)' : 'inativo(a)'}`,
+        code: `client_status_is_already_${isActive}`
+      };
+    }
+
+    await clientModel.updateClientStatus(id, status);
   } catch (error: any) {
     throw error;
   }

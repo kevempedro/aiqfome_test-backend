@@ -92,7 +92,7 @@ export async function createClient(body: ICreateClientBody) {
   );
 };
 
-export async function updateClient(body: IUpdateClientBody, id: number) {
+export async function updateClient(id: number, body: IUpdateClientBody) {
   const {
     name,
     email,
@@ -106,6 +106,17 @@ export async function updateClient(body: IUpdateClientBody, id: number) {
       WHERE id = $4;
     `,
     [name, email, (birthDate || null), id]
+  );
+};
+
+export async function updateClientStatus(id: number, status: boolean) {
+  await app.pg.query(
+     `
+      UPDATE client
+        SET is_active = $1
+      WHERE id = $2;
+    `,
+    [status, id]
   );
 };
 

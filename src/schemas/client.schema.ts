@@ -171,6 +171,44 @@ export const updateClientSchema = {
   }
 };
 
+export const updateClientStatusSchema = {
+  ...commonHeaderAuthorizationSchema,
+
+  params: {
+    type: 'object',
+    properties: {
+      id: { type: 'number' }
+    },
+    required: ['id']
+  },
+
+  body: {
+    type: 'object',
+    required: ['status'],
+    properties: {
+      status: {
+        type: 'boolean',
+      }
+    }
+  },
+
+  response: {
+    200: {
+      type: 'null',
+      description: "OK",
+    },
+    404: {
+      type: 'object',
+      description: "Not Found",
+      properties: {
+        message: { type: 'string' },
+        code: { type: 'string' }
+      }
+    },
+    ...commonResponseSchema
+  }
+};
+
 export const deleteClientSchema = {
   ...commonHeaderAuthorizationSchema,
 

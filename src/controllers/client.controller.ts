@@ -95,13 +95,38 @@ export async function updateClient(request: FastifyRequest<{ Params: { id: numbe
     } = request.body;
 
     await clientService.updateClient(
+      id,
       {
         name,
         email,
         birthDate
-      },
-      id
+      }
     );
+
+    return response.status(200).send();
+  } catch (error: any) {
+    const {
+      statusCode,
+      message,
+      code
+    } = error;
+
+    return response.status(statusCode || 500).send({
+      message: message || 'Erro interno no servidor',
+      code: code || 'internal_server_error',
+    });
+  }
+};
+
+export async function updateClientStatus(request: FastifyRequest<{ Params: { id: number }, Body: { status: boolean } }>, response: FastifyReply) {
+  try {
+    const { id } = request.params;
+
+    const {
+      status
+    } = request.body;
+
+    await clientService.updateClientStatus(id, status);
 
     return response.status(200).send();
   } catch (error: any) {
