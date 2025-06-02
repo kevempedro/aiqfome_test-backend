@@ -61,7 +61,25 @@ export async function getClientById(id: number) {
   return rows[0];
 };
 
-export async function getClientByEmail(email: string) {
+export async function clientCredentials(email: string) {
+  const { rows } = await app.connection.query(
+    `
+      SELECT
+        c.id,
+        c.name,
+        c.password,
+        TO_CHAR(c.birth_date, 'YYYY-MM-DD') AS "birthDate",
+        c.is_active AS "isActive"
+      FROM client AS c
+      WHERE c.email = $1;
+    `,
+    [email]
+  );
+
+  return rows[0];
+};
+
+export async function checkIfEmailAlreadyExists(email: string) {
   const { rowCount } = await app.connection.query(
     `
       SELECT
