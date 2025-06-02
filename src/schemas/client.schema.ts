@@ -1,8 +1,8 @@
-import commonHeaderSchema from './common-header.schema';
+import commonHeaderAuthorizationSchema from './common-header-authorization.schema';
 import commonResponseSchema from './common-response.schema';
 
 export const getAllClientsSchema = {
-  ...commonHeaderSchema,
+  ...commonHeaderAuthorizationSchema,
 
   querystring: {
     type: 'object',
@@ -49,7 +49,7 @@ export const getAllClientsSchema = {
 };
 
 export const getClientByIdSchema = {
-  ...commonHeaderSchema,
+  ...commonHeaderAuthorizationSchema,
 
   params: {
     type: 'object',
@@ -87,7 +87,7 @@ export const getClientByIdSchema = {
 };
 
 export const createClientSchema = {
-  ...commonHeaderSchema,
+  ...commonHeaderAuthorizationSchema,
 
   body: {
     type: 'object',
@@ -118,6 +118,34 @@ export const createClientSchema = {
     201: {
       type: 'null',
       description: "Created",
+    },
+    ...commonResponseSchema
+  }
+};
+
+export const deleteClientSchema = {
+  ...commonHeaderAuthorizationSchema,
+
+  params: {
+    type: 'object',
+    properties: {
+      id: { type: 'number' }
+    },
+    required: ['id']
+  },
+
+  response: {
+    200: {
+      type: 'null',
+      description: "OK",
+    },
+    404: {
+      type: 'object',
+      description: "Not Found",
+      properties: {
+        message: { type: 'string' },
+        code: { type: 'string' }
+      }
     },
     ...commonResponseSchema
   }

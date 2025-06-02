@@ -87,3 +87,12 @@ export async function createClient(body: ICreateClientBody) {
     [name, email, password, birthDate || null]
   );
 };
+
+export async function deleteClient(id: number) {
+  await app.pg.query(
+    `
+      DELETE FROM client WHERE id = $1;
+    `,
+    [id]
+  );
+};

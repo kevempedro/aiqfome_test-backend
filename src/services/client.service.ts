@@ -85,3 +85,13 @@ export async function createClient(body: ICreateClientBody) {
     throw error;
   }
 };
+
+export async function deleteClient(id: number) {
+  try {
+    await getClientById(id);
+
+    await clientModel.deleteClient(id);
+  } catch (error: any) {
+    throw error;
+  }
+};
