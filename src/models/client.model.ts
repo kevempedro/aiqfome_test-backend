@@ -36,6 +36,27 @@ export async function getAllClients(query: IGetAllClientsQuery) {
   };
 };
 
+export async function getClientById(id: number) {
+  const { rows } = await app.pg.query(
+    `
+      SELECT
+        c.id,
+        c.name,
+        c.email,
+        TO_CHAR(c.birth_date, 'YYYY-MM-DD') AS "birthDate",
+        c.is_active AS "isActive",
+        c.created_at AS "createdAt",
+        c.updated_at AS "updatedAt",
+        c.deleted_at AS "deletedAt"
+      FROM client AS c
+      WHERE c.id = $1;
+    `,
+    [id]
+  );
+
+  return rows[0];
+};
+
 export async function getClientByEmail(email: string) {
   const { rowCount } = await app.pg.query(
     `

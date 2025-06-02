@@ -19,6 +19,24 @@ export async function getAllClients(query: IGetAllClientsQuery) {
   }
 };
 
+export async function getClientById(id: number) {
+  try {
+    const client = await clientModel.getClientById(id);
+
+    if (!client) {
+      throw {
+        statusCode: 404,
+        message: 'Usuário não encontrado',
+        code: 'client_not_found'
+      };
+    }
+
+    return client;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
 export async function createClient(body: ICreateClientBody) {
   try {
     const {

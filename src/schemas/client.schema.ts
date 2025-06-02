@@ -1,13 +1,8 @@
-import { commonResponseSchema } from './common-response.schema';
+import commonHeaderSchema from './common-header.schema';
+import commonResponseSchema from './common-response.schema';
 
 export const getAllClientsSchema = {
-  headers: {
-    type: 'object',
-    required: ['authorization'],
-    properties: {
-      authorization: { type: 'string' }
-    }
-  },
+  ...commonHeaderSchema,
 
   querystring: {
     type: 'object',
@@ -53,14 +48,46 @@ export const getAllClientsSchema = {
   }
 };
 
-export const createClientSchema = {
-  headers: {
+export const getClientByIdSchema = {
+  ...commonHeaderSchema,
+
+  params: {
     type: 'object',
-    required: ['authorization'],
     properties: {
-      authorization: { type: 'string' }
-    }
+      id: { type: 'number' }
+    },
+    required: ['id']
   },
+
+  response: {
+    200: {
+      type: 'object',
+      description: "OK",
+      properties: {
+        id: { type: 'number' },
+        name: { type: 'string' },
+        email: { type: 'string' },
+        birthDate: { type: ['string', 'null'] },
+        isActive: { type: 'boolean' },
+        createdAt: { type: 'string' },
+        updatedAt: { type: 'string' },
+        deletedAt: { type: ['string', 'null'] },
+      }
+    },
+    404: {
+      type: 'object',
+      description: "Not Found",
+      properties: {
+        message: { type: 'string' },
+        code: { type: 'string' }
+      }
+    },
+    ...commonResponseSchema
+  }
+};
+
+export const createClientSchema = {
+  ...commonHeaderSchema,
 
   body: {
     type: 'object',

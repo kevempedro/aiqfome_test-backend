@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 
-import { getAllClientsSchema, createClientSchema } from '../schemas/client.schema'
+import { getAllClientsSchema, getClientByIdSchema, createClientSchema } from '../schemas/client.schema'
 import * as clientController from '../controllers/client.controller';
 
 export default async function routes(fastify: FastifyInstance) {
@@ -13,6 +13,18 @@ export default async function routes(fastify: FastifyInstance) {
       },
       preHandler: fastify.authenticate,
       handler: clientController.getAllClients
+    }
+  );
+
+  fastify.get('/:id',
+    {
+      schema: {
+        tags: ['Clientes'],
+        summary: 'Retorna um cliente pelo seu id',
+        ...getClientByIdSchema
+      },
+      preHandler: fastify.authenticate,
+      handler: clientController.getClientById
     }
   );
 
