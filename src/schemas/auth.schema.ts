@@ -1,4 +1,4 @@
-import { commonResponseSchema } from './common-response.schema';
+import commonResponseSchema from './common-response.schema';
 
 export const loginSchema = {
   body: {

@@ -1,12 +1,23 @@
-import { commonResponseSchema } from './common-response.schema';
+import commonHeaderAuthorizationSchema from './common-header-authorization.schema';
+import commonResponseSchema from './common-response.schema';
 
 export const getAllClientsSchema = {
-  headers: {
+  ...commonHeaderAuthorizationSchema,
+
+  querystring: {
     type: 'object',
-    required: ['authorization'],
+    required: ['page', 'perPage'],
     properties: {
-      authorization: { type: 'string' }
-    }
+      search: { type: 'string' },
+      page: {
+        type: 'number',
+        minimum: 1
+      },
+      perPage: {
+        type: 'number',
+        enum: [10, 20, 30, 40, 50]
+      },
+    },
   },
 
   response: {
@@ -19,6 +30,7 @@ export const getAllClientsSchema = {
           items: {
             type: 'object',
             properties: {
+              id: { type: 'number' },
               name: { type: 'string' },
               email: { type: 'string' },
               birthDate: { type: ['string', 'null'] },
@@ -36,14 +48,46 @@ export const getAllClientsSchema = {
   }
 };
 
-export const createClientSchema = {
-  headers: {
+export const getClientByIdSchema = {
+  ...commonHeaderAuthorizationSchema,
+
+  params: {
     type: 'object',
-    required: ['authorization'],
     properties: {
-      authorization: { type: 'string' }
-    }
+      id: { type: 'number' }
+    },
+    required: ['id']
   },
+
+  response: {
+    200: {
+      type: 'object',
+      description: "OK",
+      properties: {
+        id: { type: 'number' },
+        name: { type: 'string' },
+        email: { type: 'string' },
+        birthDate: { type: ['string', 'null'] },
+        isActive: { type: 'boolean' },
+        createdAt: { type: 'string' },
+        updatedAt: { type: 'string' },
+        deletedAt: { type: ['string', 'null'] },
+      }
+    },
+    404: {
+      type: 'object',
+      description: "Not Found",
+      properties: {
+        message: { type: 'string' },
+        code: { type: 'string' }
+      }
+    },
+    ...commonResponseSchema
+  }
+};
+
+export const createClientSchema = {
+  ...commonHeaderAuthorizationSchema,
 
   body: {
     type: 'object',
@@ -64,7 +108,7 @@ export const createClientSchema = {
         maxLength: 100
       },
       birthDate: {
-        type: 'string',
+        type: ['string', 'null'],
         format: 'date'
       }
     }
@@ -73,7 +117,121 @@ export const createClientSchema = {
   response: {
     201: {
       type: 'null',
+      description: "Created",
+    },
+    ...commonResponseSchema
+  }
+};
+
+export const updateClientSchema = {
+  ...commonHeaderAuthorizationSchema,
+
+  params: {
+    type: 'object',
+    properties: {
+      id: { type: 'number' }
+    },
+    required: ['id']
+  },
+
+  body: {
+    type: 'object',
+    required: ['name', 'email'],
+    properties: {
+      name: {
+        type: 'string',
+        maxLength: 100
+      },
+      email: {
+        type: 'string',
+        maxLength: 150,
+        format: 'email'
+      },
+      birthDate: {
+        type: ['string', 'null'],
+        format: 'date'
+      }
+    }
+  },
+
+  response: {
+    200: {
+      type: 'null',
       description: "OK",
+    },
+    404: {
+      type: 'object',
+      description: "Not Found",
+      properties: {
+        message: { type: 'string' },
+        code: { type: 'string' }
+      }
+    },
+    ...commonResponseSchema
+  }
+};
+
+export const updateClientStatusSchema = {
+  ...commonHeaderAuthorizationSchema,
+
+  params: {
+    type: 'object',
+    properties: {
+      id: { type: 'number' }
+    },
+    required: ['id']
+  },
+
+  body: {
+    type: 'object',
+    required: ['status'],
+    properties: {
+      status: {
+        type: 'boolean',
+      }
+    }
+  },
+
+  response: {
+    200: {
+      type: 'null',
+      description: "OK",
+    },
+    404: {
+      type: 'object',
+      description: "Not Found",
+      properties: {
+        message: { type: 'string' },
+        code: { type: 'string' }
+      }
+    },
+    ...commonResponseSchema
+  }
+};
+
+export const deleteClientSchema = {
+  ...commonHeaderAuthorizationSchema,
+
+  params: {
+    type: 'object',
+    properties: {
+      id: { type: 'number' }
+    },
+    required: ['id']
+  },
+
+  response: {
+    200: {
+      type: 'null',
+      description: "OK",
+    },
+    404: {
+      type: 'object',
+      description: "Not Found",
+      properties: {
+        message: { type: 'string' },
+        code: { type: 'string' }
+      }
     },
     ...commonResponseSchema
   }

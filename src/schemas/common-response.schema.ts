@@ -1,4 +1,4 @@
-export const commonResponseSchema = {
+export default {
   400: {
     type: 'object',
     description: "Bad Request",
