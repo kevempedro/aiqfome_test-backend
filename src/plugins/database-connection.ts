@@ -7,22 +7,22 @@ dotenv.config();
 
 declare module 'fastify' {
   interface FastifyInstance {
-    pg: Client
+    connection: Client
   }
 };
 
-const pgPlugin: FastifyPluginAsync = async (fastify) => {
+const databaseConnection: FastifyPluginAsync = async (fastify) => {
   const client = new Client({
     connectionString: process.env.DATABASE_URL
   });
 
   await client.connect();
 
-  fastify.decorate('pg', client);
+  fastify.decorate('connection', client);
 
   fastify.addHook('onClose', async () => {
     await client.end();
   });
 };
 
-export default fastifyPlugin(pgPlugin);
+export default fastifyPlugin(databaseConnection);
