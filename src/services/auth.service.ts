@@ -1,4 +1,5 @@
 import { ILoginBody } from '../interfaces/auth.interface';
+import * as clientService from '../services/client.service';
 
 export async function login(body: ILoginBody) {
   try {
@@ -7,28 +8,20 @@ export async function login(body: ILoginBody) {
       password
     } = body;
 
-    const mockClient = {
-      id: '123',
-      name: 'Kevem Lima',
-      email: 'kevem@gmail.com',
-      password: '123456'
+    const {
+      id,
+      name,
+      birthDate,
+      isActive
+    } = await clientService.clientCredentials(email, password);
+
+    return {
+      id,
+      name,
+      email,
+      birthDate,
+      isActive
     };
-
-    if (email !== mockClient.email || password !== mockClient.password) {
-      throw  {
-        statusCode: 401,
-        message: 'E-mail ou senha inválidos',
-        code: 'invalid_email_or_password'
-      };
-    }
-
-    const token = {
-      id: mockClient.id,
-      name: mockClient.name,
-      email: mockClient.email
-    };
-
-    return token;
   } catch (error: any) {
     throw error;
   }

@@ -12,11 +12,13 @@ export async function login(request: FastifyRequest<{ Body: ILoginBody }>, respo
     const {
       id,
       name,
-      email: emailData
+      email: emailData,
+      birthDate,
+      isActive
     } = authData;
 
     const token = await response.jwtSign(
-      { id, name, email: emailData },
+      { id, name, email: emailData, birthDate, isActive },
       { expiresIn: '2d' }
     );
 

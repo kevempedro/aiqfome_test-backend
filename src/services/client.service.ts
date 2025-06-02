@@ -41,6 +41,49 @@ export async function getClientById(id: number) {
   }
 };
 
+export async function clientCredentials(email: string, password: string) {
+  try {
+    checkIfEmailIsValid(email);
+
+    const client = await clientModel.clientCredentials(email);
+
+    if (!client) {
+      throw  {
+        statusCode: 401,
+        message: 'E-mail ou senha inválidos',
+        code: 'invalid_email_or_password'
+      };
+    }
+
+    const {
+      id,
+      name,
+      birthDate,
+      isActive,
+      password: clientPassword
+    } = client;
+
+    const isPassword = await bcrypt.compare(password, clientPassword);
+
+    if (!isPassword) {
+      throw  {
+        statusCode: 401,
+        message: 'E-mail ou senha inválidos',
+        code: 'invalid_email_or_password'
+      };
+    }
+
+    return {
+      id,
+      name,
+      birthDate,
+      isActive
+    };
+  } catch (error: any) {
+    throw error;
+  }
+};
+
 export async function createClient(body: ICreateClientBody) {
   try {
     const {
@@ -49,8 +92,6 @@ export async function createClient(body: ICreateClientBody) {
       password,
       birthDate
     } = body;
-
-    checkIfEmailIsValid(email);
 
     if (!validPassword(password)) {
       throw {
@@ -85,8 +126,6 @@ export async function updateClient(id: number, body: IUpdateClientBody) {
     } = body;
 
     const { email: clientEmail } = await getClientById(id);
-
-    checkIfEmailIsValid(email);
 
     if (clientEmail !== email) {
       await checkIfEmailAlreadyExists(email);
@@ -137,14 +176,16 @@ function checkIfEmailIsValid(email: string) {
   if (!validEmail(email)) {
     throw {
       statusCode: 400,
-      message: 'E-mail inválido',
-      code: 'client_email_invalid'
+      message: 'formato de e-mail inválido',
+      code: 'format_email_invalid'
     };
   }
 }
 
 async function checkIfEmailAlreadyExists(email: string) {
-  const emailAlreadyExists = await clientModel.getClientByEmail(email);
+  checkIfEmailIsValid(email);
+
+  const emailAlreadyExists = await clientModel.checkIfEmailAlreadyExists(email);
 
   if (emailAlreadyExists) {
     throw {
