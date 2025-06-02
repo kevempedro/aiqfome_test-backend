@@ -3,7 +3,7 @@ import fastifyCors from '@fastify/cors';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import authPlugin from './plugins/auth';
-import pgPlugin from './plugins/pg';
+import databaseConnectionPlugin from './plugins/database-connection';
 
 import healthCheckRoute from './routes/health-check.route';
 import authRoute from './routes/auth.route';
@@ -14,7 +14,7 @@ import swagger from './configurations/swagger.config'
 const app = Fastify({ logger: true });
 
 app.register(authPlugin);
-app.register(pgPlugin);
+app.register(databaseConnectionPlugin);
 app.register(fastifySwagger, { swagger });
 app.register(fastifyCors);
 

@@ -15,7 +15,7 @@ export async function getAllClients(query: IGetAllClientsQuery) {
   const searchQuery = search ? `%${search}%` : '%%';
   const offset = ((page - 1) * perPage);
 
-  const { rows, rowCount } = await app.pg.query(
+  const { rows, rowCount } = await app.connection.query(
     `
       SELECT
         c.id,
@@ -41,7 +41,7 @@ export async function getAllClients(query: IGetAllClientsQuery) {
 };
 
 export async function getClientById(id: number) {
-  const { rows } = await app.pg.query(
+  const { rows } = await app.connection.query(
     `
       SELECT
         c.id,
@@ -62,7 +62,7 @@ export async function getClientById(id: number) {
 };
 
 export async function getClientByEmail(email: string) {
-  const { rowCount } = await app.pg.query(
+  const { rowCount } = await app.connection.query(
     `
       SELECT
         c.id
@@ -83,7 +83,7 @@ export async function createClient(body: ICreateClientBody) {
     birthDate,
   } = body;
 
-  await app.pg.query(
+  await app.connection.query(
      `
       INSERT INTO client (name, email, password, birth_date)
       VALUES ($1, $2, $3, $4);
@@ -99,7 +99,7 @@ export async function updateClient(id: number, body: IUpdateClientBody) {
     birthDate,
   } = body;
 
-  await app.pg.query(
+  await app.connection.query(
      `
       UPDATE client
         SET name = $1, email = $2, birth_date = $3
@@ -110,7 +110,7 @@ export async function updateClient(id: number, body: IUpdateClientBody) {
 };
 
 export async function updateClientStatus(id: number, status: boolean) {
-  await app.pg.query(
+  await app.connection.query(
      `
       UPDATE client
         SET is_active = $1
@@ -121,7 +121,7 @@ export async function updateClientStatus(id: number, status: boolean) {
 };
 
 export async function deleteClient(id: number) {
-  await app.pg.query(
+  await app.connection.query(
     `
       DELETE FROM client WHERE id = $1;
     `,
