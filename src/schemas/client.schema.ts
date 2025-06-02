@@ -123,6 +123,54 @@ export const createClientSchema = {
   }
 };
 
+export const updateClientSchema = {
+  ...commonHeaderAuthorizationSchema,
+
+  params: {
+    type: 'object',
+    properties: {
+      id: { type: 'number' }
+    },
+    required: ['id']
+  },
+
+  body: {
+    type: 'object',
+    required: ['name', 'email'],
+    properties: {
+      name: {
+        type: 'string',
+        maxLength: 100
+      },
+      email: {
+        type: 'string',
+        maxLength: 150,
+        format: 'email'
+      },
+      birthDate: {
+        type: ['string', 'null'],
+        format: 'date'
+      }
+    }
+  },
+
+  response: {
+    200: {
+      type: 'null',
+      description: "OK",
+    },
+    404: {
+      type: 'object',
+      description: "Not Found",
+      properties: {
+        message: { type: 'string' },
+        code: { type: 'string' }
+      }
+    },
+    ...commonResponseSchema
+  }
+};
+
 export const deleteClientSchema = {
   ...commonHeaderAuthorizationSchema,
 

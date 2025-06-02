@@ -10,3 +10,9 @@ export interface ICreateClientBody {
   password: string,
   birthDate?: string
 };
+
+export interface IUpdateClientBody {
+  name: string,
+  email: string
+  birthDate?: string
+};

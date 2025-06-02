@@ -1,6 +1,10 @@
 import bcrypt from 'bcrypt';
 
-import { IGetAllClientsQuery, ICreateClientBody } from '../interfaces/client.interface';
+import {
+  IGetAllClientsQuery,
+  ICreateClientBody,
+  IUpdateClientBody
+} from '../interfaces/client.interface';
 import validEmail from '../utils/valid-email.util';
 import validPassword from '../utils/valid-passowrd.util';
 import * as clientModel from '../models/client.model';
@@ -46,13 +50,7 @@ export async function createClient(body: ICreateClientBody) {
       birthDate
     } = body;
 
-    if (!validEmail(email)) {
-      throw {
-        statusCode: 400,
-        message: 'E-mail inválido',
-        code: 'client_email_invalid'
-      };
-    }
+    checkIfEmailIsValid(email);
 
     if (!validPassword(password)) {
       throw {
@@ -62,15 +60,7 @@ export async function createClient(body: ICreateClientBody) {
       };
     }
 
-    const emailAlreadyExists = await clientModel.getClientByEmail(email);
-
-    if (emailAlreadyExists) {
-      throw {
-        statusCode: 400,
-        message: `Já existe um cliente com e-mail: ${email}`,
-        code: 'client_email_already_exists'
-      };
-    }
+    await checkIfEmailAlreadyExists(email);
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -86,6 +76,35 @@ export async function createClient(body: ICreateClientBody) {
   }
 };
 
+export async function updateClient(body: IUpdateClientBody, id: number) {
+  try {
+    const {
+      name,
+      email,
+      birthDate
+    } = body;
+
+    const { email: clientEmail } = await getClientById(id);
+
+    checkIfEmailIsValid(email);
+
+    if (clientEmail !== email) {
+      await checkIfEmailAlreadyExists(email);
+    }
+
+    await clientModel.updateClient(
+      {
+        name,
+        email,
+        birthDate
+      },
+      id
+    );
+  } catch (error: any) {
+    throw error;
+  }
+};
+
 export async function deleteClient(id: number) {
   try {
     await getClientById(id);
@@ -95,3 +114,25 @@ export async function deleteClient(id: number) {
     throw error;
   }
 };
+
+function checkIfEmailIsValid(email: string) {
+  if (!validEmail(email)) {
+    throw {
+      statusCode: 400,
+      message: 'E-mail inválido',
+      code: 'client_email_invalid'
+    };
+  }
+}
+
+async function checkIfEmailAlreadyExists(email: string) {
+  const emailAlreadyExists = await clientModel.getClientByEmail(email);
+
+  if (emailAlreadyExists) {
+    throw {
+      statusCode: 400,
+      message: `Já existe um cliente com e-mail: ${email}`,
+      code: 'client_email_already_exists'
+    };
+  }
+}

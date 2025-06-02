@@ -1,4 +1,8 @@
-import { IGetAllClientsQuery, ICreateClientBody } from '../interfaces/client.interface';
+import {
+  IGetAllClientsQuery,
+  ICreateClientBody,
+  IUpdateClientBody
+} from '../interfaces/client.interface';
 import app from '../app';
 
 export async function getAllClients(query: IGetAllClientsQuery) {
@@ -84,7 +88,24 @@ export async function createClient(body: ICreateClientBody) {
       INSERT INTO client (name, email, password, birth_date)
       VALUES ($1, $2, $3, $4);
     `,
-    [name, email, password, birthDate || null]
+    [name, email, password, (birthDate || null)]
+  );
+};
+
+export async function updateClient(body: IUpdateClientBody, id: number) {
+  const {
+    name,
+    email,
+    birthDate,
+  } = body;
+
+  await app.pg.query(
+     `
+      UPDATE client
+        SET name = $1, email = $2, birth_date = $3
+      WHERE id = $4;
+    `,
+    [name, email, (birthDate || null), id]
   );
 };
 
