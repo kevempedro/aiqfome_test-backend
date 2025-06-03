@@ -36,8 +36,7 @@ export const getAllClientsSchema = {
               birthDate: { type: ['string', 'null'] },
               isActive: { type: 'boolean' },
               createdAt: { type: 'string' },
-              updatedAt: { type: 'string' },
-              deletedAt: { type: ['string', 'null'] },
+              updatedAt: { type: 'string' }
             },
           }
         },
@@ -70,8 +69,7 @@ export const getClientByIdSchema = {
         birthDate: { type: ['string', 'null'] },
         isActive: { type: 'boolean' },
         createdAt: { type: 'string' },
-        updatedAt: { type: 'string' },
-        deletedAt: { type: ['string', 'null'] },
+        updatedAt: { type: 'string' }
       }
     },
     404: {
@@ -195,6 +193,37 @@ export const updateClientStatusSchema = {
     200: {
       type: 'null',
       description: "OK",
+    },
+    404: {
+      type: 'object',
+      description: "Not Found",
+      properties: {
+        message: { type: 'string' },
+        code: { type: 'string' }
+      }
+    },
+    ...commonResponseSchema
+  }
+};
+
+export const favoriteProductSchema = {
+  ...commonHeaderAuthorizationSchema,
+
+  body: {
+    type: 'object',
+    required: ['productId'],
+    properties: {
+      productId: {
+        type: 'number',
+        minimum: 1
+      },
+    }
+  },
+
+  response: {
+    201: {
+      type: 'null',
+      description: "Created",
     },
     404: {
       type: 'object',

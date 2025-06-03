@@ -143,6 +143,29 @@ export async function updateClientStatus(request: FastifyRequest<{ Params: { id:
   }
 };
 
+export async function favoriteProduct(request: FastifyRequest<{ Body: { productId: number } }>, response: FastifyReply) {
+  try {
+    const { productId } = request.body;
+
+    const { id: clientId } = request.user as { id: number };
+
+    await clientService.favoriteProduct(clientId, productId);
+
+    return response.status(200).send();
+  } catch (error: any) {
+    const {
+      statusCode,
+      message,
+      code
+    } = error;
+
+    return response.status(statusCode || 500).send({
+      message: message || 'Erro interno no servidor',
+      code: code || 'internal_server_error',
+    });
+  }
+};
+
 export async function deleteClient(request: FastifyRequest<{ Params: { id: number } }>, response: FastifyReply) {
   try {
     const { id } = request.params;

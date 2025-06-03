@@ -6,6 +6,7 @@ import {
   createClientSchema,
   updateClientSchema,
   updateClientStatusSchema,
+  favoriteProductSchema,
   deleteClientSchema
 } from '../schemas/client.schema';
 import * as clientController from '../controllers/client.controller';
@@ -67,6 +68,18 @@ export default async function routes(fastify: FastifyInstance) {
       },
       preHandler: fastify.authenticate,
       handler: clientController.updateClientStatus
+    }
+  );
+
+  fastify.post('/favorite-product',
+    {
+      schema: {
+        tags: ['Clientes'],
+        summary: 'Adiciona um produto a lista de favoritos do cliente pelo id do produto',
+        ...favoriteProductSchema
+      },
+      preHandler: fastify.authenticate,
+      handler: clientController.favoriteProduct
     }
   );
 
