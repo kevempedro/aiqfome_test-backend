@@ -42,7 +42,6 @@ export default async function routes(fastify: FastifyInstance) {
         summary: 'Cria um novo cliente',
         ...createClientSchema
       },
-      preHandler: fastify.authenticate,
       handler: clientController.createClient
     }
   );
