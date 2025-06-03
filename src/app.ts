@@ -8,6 +8,7 @@ import databaseConnectionPlugin from './plugins/database-connection';
 import healthCheckRoute from './routes/health-check.route';
 import authRoute from './routes/auth.route';
 import clientRoute from './routes/client.route';
+import productRoute from './routes/product.route';
 
 import swagger from './configurations/swagger.config'
 
@@ -26,6 +27,9 @@ app.register(authRoute, { prefix: '/login' });
 
 // clients routes
 app.register(clientRoute, { prefix: '/clients' });
+
+// products routes
+app.register(productRoute, { prefix: '/products' });
 
 // documentation route
 app.register(fastifySwaggerUi, {

@@ -87,8 +87,6 @@ export const getClientByIdSchema = {
 };
 
 export const createClientSchema = {
-  ...commonHeaderAuthorizationSchema,
-
   body: {
     type: 'object',
     required: ['name', 'email', 'password'],
@@ -119,7 +117,8 @@ export const createClientSchema = {
       type: 'null',
       description: "Created",
     },
-    ...commonResponseSchema
+    400: commonResponseSchema[400],
+    500: commonResponseSchema[500]
   }
 };
 
