@@ -1,8 +1,7 @@
 import { FastifyInstance } from 'fastify';
-import { axiosApi } from '../helpers/axios.helper';
 
-import dotenv from 'dotenv';
-dotenv.config();
+import { getAllProductsSchema, getProductByIdSchema } from '../schemas/product.schema';
+import * as productController from '../controllers/product.controller';
 
 export default async function routes(fastify: FastifyInstance) {
   fastify.get('/',
@@ -10,16 +9,22 @@ export default async function routes(fastify: FastifyInstance) {
       schema: {
         tags: ['Produtos'],
         summary: 'Retorna os produtos',
+        ...getAllProductsSchema
       },
       preHandler: fastify.authenticate,
-      handler: async () => {
-        const products = await axiosApi({
-          method: 'GET',
-          url: `${process.env.FAKE_STORE_HOST}/products`,
-        });
+      handler: productController.getAllProducts
+    }
+  );
 
-        console.log('products -> ', products);
-      }
+    fastify.get('/:id',
+    {
+      schema: {
+        tags: ['Produtos'],
+        summary: 'Retorna um produto pelo seu id',
+        ...getProductByIdSchema
+      },
+      preHandler: fastify.authenticate,
+      handler: productController.getProductById
     }
   );
 };
