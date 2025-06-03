@@ -7,7 +7,7 @@ import {
   updateClientSchema,
   updateClientStatusSchema,
   deleteClientSchema
-} from '../schemas/client.schema'
+} from '../schemas/client.schema';
 import * as clientController from '../controllers/client.controller';
 
 export default async function routes(fastify: FastifyInstance) {
