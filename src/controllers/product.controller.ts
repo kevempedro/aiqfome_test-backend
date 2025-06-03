@@ -24,3 +24,26 @@ export async function getAllProducts(request: FastifyRequest<{ Querystring: { se
     });
   }
 };
+
+export async function getProductById(request: FastifyRequest<{ Params: { id: number } }>, response: FastifyReply) {
+  try {
+    const {
+      id
+    } = request.params;
+
+    const product = await productService.getProductById(id);
+
+    return response.status(200).send(product);
+  } catch (error: any) {
+    const {
+      statusCode,
+      message,
+      code
+    } = error;
+
+    return response.status(statusCode || 500).send({
+      message: message || 'Erro interno no servidor',
+      code: code || 'internal_server_error',
+    });
+  }
+};

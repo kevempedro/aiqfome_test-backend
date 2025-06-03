@@ -30,7 +30,7 @@ export async function getClientById(id: number) {
     if (!client) {
       throw {
         statusCode: 404,
-        message: 'Usuário não encontrado',
+        message: 'Cliente não encontrado',
         code: 'client_not_found'
       };
     }

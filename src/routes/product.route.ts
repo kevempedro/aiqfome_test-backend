@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 
-import { getAllProductsSchema } from '../schemas/product.schema';
+import { getAllProductsSchema, getProductByIdSchema } from '../schemas/product.schema';
 import * as productController from '../controllers/product.controller';
 
 export default async function routes(fastify: FastifyInstance) {
@@ -13,6 +13,18 @@ export default async function routes(fastify: FastifyInstance) {
       },
       preHandler: fastify.authenticate,
       handler: productController.getAllProducts
+    }
+  );
+
+    fastify.get('/:id',
+    {
+      schema: {
+        tags: ['Produtos'],
+        summary: 'Retorna um produto pelo seu id',
+        ...getProductByIdSchema
+      },
+      preHandler: fastify.authenticate,
+      handler: productController.getProductById
     }
   );
 };

@@ -31,3 +31,24 @@ export async function getAllProducts(search: string) {
     throw error;
   }
 };
+
+export async function getProductById(id: number) {
+  try {
+    let product = await axiosApi({
+      method: 'GET',
+      url: `${fakeStoreBaseUrl}/${id}`,
+    });
+
+    if (!product) {
+      throw {
+        statusCode: 404,
+        message: 'Produto não encontrado',
+        code: 'product_not_found'
+      };
+    }
+
+    return product;
+  } catch (error: any) {
+    throw error;
+  }
+};
