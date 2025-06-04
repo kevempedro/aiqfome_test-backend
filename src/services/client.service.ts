@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 
 import {
-  IGetAllClientsQuery,
+  IGetAllQuery,
   ICreateClientBody,
   IUpdateClientBody
 } from '../interfaces/client.interface';
@@ -11,7 +11,7 @@ import * as clientModel from '../models/client.model';
 import * as productService from './product.service';
 
 
-export async function getAllClients(query: IGetAllClientsQuery) {
+export async function getAllClients(query: IGetAllQuery) {
   try {
     const { clients, totalCount } = await clientModel.getAllClients(query);
 
@@ -170,6 +170,19 @@ export async function deleteClient(id: number) {
     await getClientById(id);
 
     await clientModel.deleteClient(id);
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export async function getAllFavoriteProducts(clientId: number, query: IGetAllQuery) {
+  try {
+    const { favoriteProducts, totalCount } = await clientModel.getAllFavoriteProducts(clientId, query);
+
+    return {
+      favoriteProducts,
+      totalCount
+    };
   } catch (error: any) {
     throw error;
   }

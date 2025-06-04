@@ -16,8 +16,8 @@ export const getAllClientsSchema = {
       perPage: {
         type: 'number',
         enum: [10, 20, 30, 40, 50]
-      },
-    },
+      }
+    }
   },
 
   response: {
@@ -37,7 +37,7 @@ export const getAllClientsSchema = {
               isActive: { type: 'boolean' },
               createdAt: { type: 'string' },
               updatedAt: { type: 'string' }
-            },
+            }
           }
         },
         totalCount: { type: 'number' },
@@ -234,6 +234,60 @@ export const deleteClientSchema = {
   }
 };
 
+export const getAllFavoriteProductsSchema = {
+  ...commonHeaderAuthorizationSchema,
+
+  querystring: {
+    type: 'object',
+    required: ['page', 'perPage'],
+    properties: {
+      search: { type: 'string' },
+      page: {
+        type: 'number',
+        minimum: 1
+      },
+      perPage: {
+        type: 'number',
+        enum: [10, 20, 30, 40, 50]
+      }
+    }
+  },
+
+  response: {
+    200: {
+      type: 'object',
+      description: "OK",
+      properties: {
+        favoriteProducts: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'number' },
+              productId: { type: 'number' },
+              title: { type: 'string' },
+              price: { type: 'number' },
+              description: { type: ['string', 'null'] },
+              category: { type: ['string', 'null'] },
+              image: { type: ['string', 'null'] },
+              rating: {
+                type: ['object', 'null'],
+                properties: {
+                  rate: { type: 'number' },
+                  count: { type: 'number' }
+                }
+              },
+              createdAt: { type: 'string' }
+            }
+          }
+        },
+        totalCount: { type: 'number' },
+      }
+    },
+    ...commonResponseSchema
+  }
+};
+
 export const favoriteProductSchema = {
   ...commonHeaderAuthorizationSchema,
 
@@ -244,7 +298,7 @@ export const favoriteProductSchema = {
       productId: {
         type: 'number',
         minimum: 1
-      },
+      }
     }
   },
 

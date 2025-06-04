@@ -1,12 +1,12 @@
 import {
-  IGetAllClientsQuery,
+  IGetAllQuery,
   ICreateClientBody,
   IUpdateClientBody
 } from '../interfaces/client.interface';
 import { IProductBody } from '../interfaces/product.interface';
 import app from '../app';
 
-export async function getAllClients(query: IGetAllClientsQuery) {
+export async function getAllClients(query: IGetAllQuery) {
   const {
     search,
     page,
@@ -37,6 +37,43 @@ export async function getAllClients(query: IGetAllClientsQuery) {
 
   return {
     clients: rows,
+    totalCount: rowCount
+  };
+};
+
+export async function getAllFavoriteProducts(clientId: number ,query: IGetAllQuery) {
+  const {
+    search,
+    page,
+    perPage
+  } = query;
+
+  const searchQuery = search ? `%${search}%` : '%%';
+  const offset = ((page - 1) * perPage);
+
+  const { rows, rowCount } = await app.connection.query(
+    `
+      SELECT
+        cfp.id,
+        cfp.product_id AS "productId",
+        cfp.title,
+        cfp.price,
+        cfp.description,
+        cfp.category,
+        cfp.image,
+        cfp.rating,
+        cfp.created_at AS "createdAt"
+      FROM client_favorite_product AS cfp
+      WHERE cfp.client_id = $1
+      AND cfp.title ILIKE $2
+      ORDER BY cfp.created_at ASC
+      LIMIT $3 OFFSET $4;
+    `,
+    [clientId, searchQuery, perPage, offset]
+  );
+
+  return {
+    favoriteProducts: rows,
     totalCount: rowCount
   };
 };

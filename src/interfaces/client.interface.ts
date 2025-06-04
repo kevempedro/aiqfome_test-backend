@@ -1,4 +1,4 @@
-export interface IGetAllClientsQuery {
+export interface IGetAllQuery {
   search?: string,
   page: number,
   perPage: number
