@@ -53,6 +53,12 @@ Entre os bancos de dados sugeridos, optei pelo PostgreSQL por ser um banco de da
 
 Todas as variáveis de ambiente necessárias para rodar o projeto encontram-se no arquivo “.env.example”. Copie as variáveis do arquivo informado, crie um arquivo chamado “.env” na raiz do projeto e cole-as nele.
 
+## 🗄️ Migrations
+
+O arquivo contendo as migrations para criar as tabelas no banco de dados estão na pasta "src/migrations".
+
+**Observação:** o nome do banco de dados é "aiqfome".
+
 
 ## 🚀 Iniciando a aplicação
 
@@ -60,7 +66,7 @@ Todas as variáveis de ambiente necessárias para rodar o projeto encontram-se n
 
 - npm install
 
-observação: Como o Fastify está rodando na versão 5, de acordo com a documentação, a versão do Node deve ser 20 ou superior.
+**Observação:** Como o Fastify está rodando na versão 5, de acordo com a documentação, a versão do Node deve ser 20 ou superior.
 
 ### Rodando em desenvolvimento
 
