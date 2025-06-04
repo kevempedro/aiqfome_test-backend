@@ -103,8 +103,10 @@ Devido à deadline do projeto, foquei no desenvolvimento das funcionalidades e r
 
 - Rotas para gerenciamento dos produtos dentro da aplicação.
 
-- Testes unitários e testes de carga.
+- Cache de dados com Redis.
 
+- Testes unitários e testes de carga.
+ 
 - Suporte a i18n para lidar com múltiplas regiões.
 
 
