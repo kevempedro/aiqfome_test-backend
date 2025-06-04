@@ -16,8 +16,8 @@ export const getAllClientsSchema = {
       perPage: {
         type: 'number',
         enum: [10, 20, 30, 40, 50]
-      },
-    },
+      }
+    }
   },
 
   response: {
@@ -36,9 +36,8 @@ export const getAllClientsSchema = {
               birthDate: { type: ['string', 'null'] },
               isActive: { type: 'boolean' },
               createdAt: { type: 'string' },
-              updatedAt: { type: 'string' },
-              deletedAt: { type: ['string', 'null'] },
-            },
+              updatedAt: { type: 'string' }
+            }
           }
         },
         totalCount: { type: 'number' },
@@ -53,10 +52,10 @@ export const getClientByIdSchema = {
 
   params: {
     type: 'object',
+    required: ['id'],
     properties: {
       id: { type: 'number' }
-    },
-    required: ['id']
+    }
   },
 
   response: {
@@ -70,8 +69,7 @@ export const getClientByIdSchema = {
         birthDate: { type: ['string', 'null'] },
         isActive: { type: 'boolean' },
         createdAt: { type: 'string' },
-        updatedAt: { type: 'string' },
-        deletedAt: { type: ['string', 'null'] },
+        updatedAt: { type: 'string' }
       }
     },
     404: {
@@ -127,10 +125,10 @@ export const updateClientSchema = {
 
   params: {
     type: 'object',
+    required: ['id'],
     properties: {
       id: { type: 'number' }
-    },
-    required: ['id']
+    }
   },
 
   body: {
@@ -175,10 +173,10 @@ export const updateClientStatusSchema = {
 
   params: {
     type: 'object',
+    required: ['id'],
     properties: {
       id: { type: 'number' }
-    },
-    required: ['id']
+    }
   },
 
   body: {
@@ -213,10 +211,123 @@ export const deleteClientSchema = {
 
   params: {
     type: 'object',
+    required: ['id'],
     properties: {
       id: { type: 'number' }
+    }
+  },
+
+  response: {
+    200: {
+      type: 'null',
+      description: "OK",
     },
-    required: ['id']
+    404: {
+      type: 'object',
+      description: "Not Found",
+      properties: {
+        message: { type: 'string' },
+        code: { type: 'string' }
+      }
+    },
+    ...commonResponseSchema
+  }
+};
+
+export const getAllFavoriteProductsSchema = {
+  ...commonHeaderAuthorizationSchema,
+
+  querystring: {
+    type: 'object',
+    required: ['page', 'perPage'],
+    properties: {
+      search: { type: 'string' },
+      page: {
+        type: 'number',
+        minimum: 1
+      },
+      perPage: {
+        type: 'number',
+        enum: [10, 20, 30, 40, 50]
+      }
+    }
+  },
+
+  response: {
+    200: {
+      type: 'object',
+      description: "OK",
+      properties: {
+        favoriteProducts: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'number' },
+              productId: { type: 'number' },
+              title: { type: 'string' },
+              price: { type: 'number' },
+              description: { type: ['string', 'null'] },
+              category: { type: ['string', 'null'] },
+              image: { type: ['string', 'null'] },
+              rating: {
+                type: ['object', 'null'],
+                properties: {
+                  rate: { type: 'number' },
+                  count: { type: 'number' }
+                }
+              },
+              createdAt: { type: 'string' }
+            }
+          }
+        },
+        totalCount: { type: 'number' },
+      }
+    },
+    ...commonResponseSchema
+  }
+};
+
+export const favoriteProductSchema = {
+  ...commonHeaderAuthorizationSchema,
+
+  body: {
+    type: 'object',
+    required: ['productId'],
+    properties: {
+      productId: {
+        type: 'number',
+        minimum: 1
+      }
+    }
+  },
+
+  response: {
+    201: {
+      type: 'null',
+      description: "Created",
+    },
+    404: {
+      type: 'object',
+      description: "Not Found",
+      properties: {
+        message: { type: 'string' },
+        code: { type: 'string' }
+      }
+    },
+    ...commonResponseSchema
+  }
+};
+
+export const deleteFavoriteProductSchema = {
+  ...commonHeaderAuthorizationSchema,
+
+  params: {
+    type: 'object',
+    required: ['productId'],
+    properties: {
+      productId: { type: 'number' }
+    }
   },
 
   response: {

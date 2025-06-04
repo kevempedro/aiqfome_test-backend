@@ -1,11 +1,12 @@
 import {
-  IGetAllClientsQuery,
+  IGetAllQuery,
   ICreateClientBody,
   IUpdateClientBody
 } from '../interfaces/client.interface';
+import { IProductBody } from '../interfaces/product.interface';
 import app from '../app';
 
-export async function getAllClients(query: IGetAllClientsQuery) {
+export async function getAllClients(query: IGetAllQuery) {
   const {
     search,
     page,
@@ -24,11 +25,11 @@ export async function getAllClients(query: IGetAllClientsQuery) {
         TO_CHAR(c.birth_date, 'YYYY-MM-DD') AS "birthDate",
         c.is_active AS "isActive",
         c.created_at AS "createdAt",
-        c.updated_at AS "updatedAt",
-        c.deleted_at AS "deletedAt"
+        c.updated_at AS "updatedAt"
       FROM client AS c
       WHERE c.name ILIKE $1
       OR c.email ILIKE $2
+      ORDER BY c.created_at ASC
       LIMIT $3 OFFSET $4;
     `,
     [searchQuery, searchQuery, perPage, offset]
@@ -36,6 +37,43 @@ export async function getAllClients(query: IGetAllClientsQuery) {
 
   return {
     clients: rows,
+    totalCount: rowCount
+  };
+};
+
+export async function getAllFavoriteProducts(clientId: number ,query: IGetAllQuery) {
+  const {
+    search,
+    page,
+    perPage
+  } = query;
+
+  const searchQuery = search ? `%${search}%` : '%%';
+  const offset = ((page - 1) * perPage);
+
+  const { rows, rowCount } = await app.connection.query(
+    `
+      SELECT
+        cfp.id,
+        cfp.product_id AS "productId",
+        cfp.title,
+        cfp.price,
+        cfp.description,
+        cfp.category,
+        cfp.image,
+        cfp.rating,
+        cfp.created_at AS "createdAt"
+      FROM client_favorite_product AS cfp
+      WHERE cfp.client_id = $1
+      AND cfp.title ILIKE $2
+      ORDER BY cfp.created_at ASC
+      LIMIT $3 OFFSET $4;
+    `,
+    [clientId, searchQuery, perPage, offset]
+  );
+
+  return {
+    favoriteProducts: rows,
     totalCount: rowCount
   };
 };
@@ -50,8 +88,7 @@ export async function getClientById(id: number) {
         TO_CHAR(c.birth_date, 'YYYY-MM-DD') AS "birthDate",
         c.is_active AS "isActive",
         c.created_at AS "createdAt",
-        c.updated_at AS "updatedAt",
-        c.deleted_at AS "deletedAt"
+        c.updated_at AS "updatedAt"
       FROM client AS c
       WHERE c.id = $1;
     `,
@@ -93,6 +130,20 @@ export async function checkIfEmailAlreadyExists(email: string) {
   return rowCount;
 };
 
+export async function checkIfProductAlreadyFavorite(clientId: number, productId: number) {
+  const { rows } = await app.connection.query(
+     `
+      SELECT
+        cfp.id
+      FROM client_favorite_product AS cfp
+      WHERE client_id = $1 AND product_id = $2
+    `,
+    [clientId, productId]
+  );
+
+  return rows[0];
+};
+
 export async function createClient(body: ICreateClientBody) {
   const {
     name,
@@ -120,7 +171,7 @@ export async function updateClient(id: number, body: IUpdateClientBody) {
   await app.connection.query(
      `
       UPDATE client
-        SET name = $1, email = $2, birth_date = $3
+        SET name = $1, email = $2, birth_date = $3, updated_at = now()
       WHERE id = $4;
     `,
     [name, email, (birthDate || null), id]
@@ -131,10 +182,31 @@ export async function updateClientStatus(id: number, status: boolean) {
   await app.connection.query(
      `
       UPDATE client
-        SET is_active = $1
+        SET is_active = $1, updated_at = now()
       WHERE id = $2;
     `,
     [status, id]
+  );
+};
+
+export async function favoriteProduct(clientId: number, product: IProductBody) {
+  const {
+    id: productId,
+    title,
+    price,
+    description,
+    category,
+    image,
+    rating
+  } = product;
+
+  await app.connection.query(
+     `
+      INSERT INTO client_favorite_product
+        (client_id, product_id, title, price, description, category, image, rating)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `,
+    [clientId, productId, title, price, (description || null), (category || null), (image || null), (rating || null)]
   );
 };
 
@@ -144,5 +216,14 @@ export async function deleteClient(id: number) {
       DELETE FROM client WHERE id = $1;
     `,
     [id]
+  );
+};
+
+export async function deleteFavoriteProduct(clientId: number, productId: number) {
+  await app.connection.query(
+    `
+      DELETE FROM client_favorite_product WHERE client_id = $1 AND product_id = $2;
+    `,
+    [clientId, productId]
   );
 };

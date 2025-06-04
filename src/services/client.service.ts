@@ -1,16 +1,17 @@
 import bcrypt from 'bcrypt';
 
 import {
-  IGetAllClientsQuery,
+  IGetAllQuery,
   ICreateClientBody,
   IUpdateClientBody
 } from '../interfaces/client.interface';
 import validEmail from '../utils/valid-email.util';
 import validPassword from '../utils/valid-passowrd.util';
 import * as clientModel from '../models/client.model';
+import * as productService from './product.service';
 
 
-export async function getAllClients(query: IGetAllClientsQuery) {
+export async function getAllClients(query: IGetAllQuery) {
   try {
     const { clients, totalCount } = await clientModel.getAllClients(query);
 
@@ -62,6 +63,8 @@ export async function clientCredentials(email: string, password: string) {
       isActive,
       password: clientPassword
     } = client;
+
+    checkIfClientIsActive(isActive);
 
     const isPassword = await bcrypt.compare(password, clientPassword);
 
@@ -172,6 +175,84 @@ export async function deleteClient(id: number) {
   }
 };
 
+export async function getAllFavoriteProducts(clientId: number, query: IGetAllQuery) {
+  try {
+    const { favoriteProducts, totalCount } = await clientModel.getAllFavoriteProducts(clientId, query);
+
+    return {
+      favoriteProducts,
+      totalCount
+    };
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export async function favoriteProduct(clientId: number, productId: number) {
+  try {
+    const { isActive } = await getClientById(clientId);
+
+    checkIfClientIsActive(isActive);
+
+    const productAlreadyFavorite = await clientModel.checkIfProductAlreadyFavorite(clientId, productId);
+
+    if (productAlreadyFavorite) {
+        throw {
+        statusCode: 400,
+        message: 'Esse produto já está na lista de produtos favoritos do cliente',
+        code: 'product_already_favorite'
+      };
+    }
+
+    const {
+      id,
+      title,
+      price,
+      description,
+      category,
+      image,
+      rating
+    } = await productService.getProductById(productId);
+
+    await clientModel.favoriteProduct(
+      clientId,
+      {
+        id,
+        title,
+        price,
+        description,
+        category,
+        image,
+        rating
+      }
+    );
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export async function deleteFavoriteProduct(clientId: number, productId: number) {
+  try {
+    const { isActive } = await getClientById(clientId);
+
+    checkIfClientIsActive(isActive);
+
+    const productAlreadyFavorite = await clientModel.checkIfProductAlreadyFavorite(clientId, productId);
+
+    if (!productAlreadyFavorite) {
+        throw {
+        statusCode: 404,
+        message: 'Produto favorito não encontrado para o cliente',
+        code: 'favorite_product_not_found'
+      };
+    }
+
+    await clientModel.deleteFavoriteProduct(clientId, productId);
+  } catch (error: any) {
+    throw error;
+  }
+};
+
 function checkIfEmailIsValid(email: string) {
   if (!validEmail(email)) {
     throw {
@@ -180,7 +261,7 @@ function checkIfEmailIsValid(email: string) {
       code: 'format_email_invalid'
     };
   }
-}
+};
 
 async function checkIfEmailAlreadyExists(email: string) {
   checkIfEmailIsValid(email);
@@ -194,4 +275,14 @@ async function checkIfEmailAlreadyExists(email: string) {
       code: 'client_email_already_exists'
     };
   }
-}
+};
+
+function checkIfClientIsActive(isActive: boolean) {
+  if (!isActive) {
+    throw  {
+      statusCode: 401,
+      message: 'Seu acesso foi desativado',
+      code: 'client_is_inactive'
+    };
+  }
+};

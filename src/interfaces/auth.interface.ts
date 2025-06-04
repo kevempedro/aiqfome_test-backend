@@ -1,4 +1,4 @@
 export interface ILoginBody {
-  email: string
+  email: string,
   password: string
 };

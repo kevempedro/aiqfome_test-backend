@@ -8,7 +8,7 @@ export const getAllProductsSchema = {
     type: 'object',
     properties: {
       search: { type: 'string' }
-    },
+    }
   },
 
   response: {
@@ -33,8 +33,8 @@ export const getAllProductsSchema = {
                   rate: { type: 'number' },
                   count: { type: 'number' }
                 }
-              },
-            },
+              }
+            }
           }
         },
         totalCount: { type: 'number' },
@@ -49,10 +49,10 @@ export const getProductByIdSchema = {
 
   params: {
     type: 'object',
+    required: ['id'],
     properties: {
       id: { type: 'number' }
-    },
-    required: ['id']
+    }
   },
 
   response: {
@@ -72,7 +72,7 @@ export const getProductByIdSchema = {
             rate: { type: 'number' },
             count: { type: 'number' }
           }
-        },
+        }
       }
     },
     404: {

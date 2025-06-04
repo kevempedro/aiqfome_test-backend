@@ -1,9 +1,9 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 
-import { IGetAllClientsQuery, ICreateClientBody } from '../interfaces/client.interface';
+import { IGetAllQuery, ICreateClientBody } from '../interfaces/client.interface';
 import * as clientService from '../services/client.service';
 
-export async function getAllClients(request: FastifyRequest<{ Querystring: IGetAllClientsQuery }>, response: FastifyReply) {
+export async function getAllClients(request: FastifyRequest<{ Querystring: IGetAllQuery }>, response: FastifyReply) {
   try {
     const {
       search,
@@ -148,6 +148,86 @@ export async function deleteClient(request: FastifyRequest<{ Params: { id: numbe
     const { id } = request.params;
 
     await clientService.deleteClient(id);
+
+    return response.status(200).send();
+  } catch (error: any) {
+    const {
+      statusCode,
+      message,
+      code
+    } = error;
+
+    return response.status(statusCode || 500).send({
+      message: message || 'Erro interno no servidor',
+      code: code || 'internal_server_error',
+    });
+  }
+};
+
+export async function getAllFavoriteProducts(request: FastifyRequest<{ Querystring: IGetAllQuery }>, response: FastifyReply) {
+  try {
+    const { id: clientId } = request.user as { id: number };
+
+    const {
+      search,
+      page,
+      perPage
+    } = request.query;
+
+    const favoriteProducts = await clientService.getAllFavoriteProducts(
+      clientId,
+      {
+        search,
+        page,
+        perPage
+      }
+    );
+
+    return response.status(200).send(favoriteProducts);
+  } catch (error: any) {
+    const {
+      statusCode,
+      message,
+      code
+    } = error;
+
+    return response.status(statusCode || 500).send({
+      message: message || 'Erro interno no servidor',
+      code: code || 'internal_server_error',
+    });
+  }
+};
+
+export async function favoriteProduct(request: FastifyRequest<{ Body: { productId: number } }>, response: FastifyReply) {
+  try {
+    const { id: clientId } = request.user as { id: number };
+
+    const { productId } = request.body;
+
+    await clientService.favoriteProduct(clientId, productId);
+
+    return response.status(200).send();
+  } catch (error: any) {
+    const {
+      statusCode,
+      message,
+      code
+    } = error;
+
+    return response.status(statusCode || 500).send({
+      message: message || 'Erro interno no servidor',
+      code: code || 'internal_server_error',
+    });
+  }
+};
+
+export async function deleteFavoriteProduct(request: FastifyRequest<{ Params: { productId: number } }>, response: FastifyReply) {
+  try {
+    const { id: clientId } = request.user as { id: number };
+
+    const { productId } = request.params;
+
+    await clientService.deleteFavoriteProduct(clientId, productId);
 
     return response.status(200).send();
   } catch (error: any) {

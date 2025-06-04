@@ -1,4 +1,4 @@
-export interface IGetAllClientsQuery {
+export interface IGetAllQuery {
   search?: string,
   page: number,
   perPage: number
@@ -6,13 +6,13 @@ export interface IGetAllClientsQuery {
 
 export interface ICreateClientBody {
   name: string,
-  email: string
+  email: string,
   password: string,
   birthDate?: string
 };
 
 export interface IUpdateClientBody {
   name: string,
-  email: string
+  email: string,
   birthDate?: string
 };
