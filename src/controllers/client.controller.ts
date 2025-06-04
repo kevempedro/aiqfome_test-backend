@@ -143,6 +143,27 @@ export async function updateClientStatus(request: FastifyRequest<{ Params: { id:
   }
 };
 
+export async function deleteClient(request: FastifyRequest<{ Params: { id: number } }>, response: FastifyReply) {
+  try {
+    const { id } = request.params;
+
+    await clientService.deleteClient(id);
+
+    return response.status(200).send();
+  } catch (error: any) {
+    const {
+      statusCode,
+      message,
+      code
+    } = error;
+
+    return response.status(statusCode || 500).send({
+      message: message || 'Erro interno no servidor',
+      code: code || 'internal_server_error',
+    });
+  }
+};
+
 export async function favoriteProduct(request: FastifyRequest<{ Body: { productId: number } }>, response: FastifyReply) {
   try {
     const { productId } = request.body;
@@ -166,11 +187,13 @@ export async function favoriteProduct(request: FastifyRequest<{ Body: { productI
   }
 };
 
-export async function deleteClient(request: FastifyRequest<{ Params: { id: number } }>, response: FastifyReply) {
+export async function deleteFavoriteProduct(request: FastifyRequest<{ Params: { productId: number } }>, response: FastifyReply) {
   try {
-    const { id } = request.params;
+    const { productId } = request.params;
 
-    await clientService.deleteClient(id);
+    const { id: clientId } = request.user as { id: number };
+
+    await clientService.deleteFavoriteProduct(clientId, productId);
 
     return response.status(200).send();
   } catch (error: any) {

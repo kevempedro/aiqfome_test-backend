@@ -165,6 +165,16 @@ export async function updateClientStatus(id: number, status: boolean) {
   }
 };
 
+export async function deleteClient(id: number) {
+  try {
+    await getClientById(id);
+
+    await clientModel.deleteClient(id);
+  } catch (error: any) {
+    throw error;
+  }
+};
+
 export async function favoriteProduct(clientId: number, productId: number) {
   try {
     const { isActive } = await getClientById(clientId);
@@ -208,11 +218,23 @@ export async function favoriteProduct(clientId: number, productId: number) {
   }
 };
 
-export async function deleteClient(id: number) {
+export async function deleteFavoriteProduct(clientId: number, productId: number) {
   try {
-    await getClientById(id);
+    const { isActive } = await getClientById(clientId);
 
-    await clientModel.deleteClient(id);
+    checkIfClientIsActive(isActive);
+
+    const productAlreadyFavorite = await clientModel.checkIfProductAlreadyFavorite(clientId, productId);
+
+    if (!productAlreadyFavorite) {
+        throw {
+        statusCode: 404,
+        message: 'Produto favorito não encontrado para o cliente',
+        code: 'favorite_product_not_found'
+      };
+    }
+
+    await clientModel.deleteFavoriteProduct(clientId, productId);
   } catch (error: any) {
     throw error;
   }

@@ -7,6 +7,7 @@ import {
   updateClientSchema,
   updateClientStatusSchema,
   favoriteProductSchema,
+  deleteFavoriteProductSchema,
   deleteClientSchema
 } from '../schemas/client.schema';
 import * as clientController from '../controllers/client.controller';
@@ -71,6 +72,18 @@ export default async function routes(fastify: FastifyInstance) {
     }
   );
 
+  fastify.delete('/:id',
+    {
+      schema: {
+        tags: ['Clientes'],
+        summary: 'Deleta um cliente pelo seu id',
+        ...deleteClientSchema
+      },
+      preHandler: fastify.authenticate,
+      handler: clientController.deleteClient
+    }
+  );
+
   fastify.post('/favorite-product',
     {
       schema: {
@@ -83,15 +96,15 @@ export default async function routes(fastify: FastifyInstance) {
     }
   );
 
-  fastify.delete('/:id',
+  fastify.delete('/favorite-product/:productId',
     {
       schema: {
         tags: ['Clientes'],
-        summary: 'Deleta um cliente pelo seu id',
-        ...deleteClientSchema
+        summary: 'Deleta um produto a lista de favoritos do cliente pelo id do produto',
+        ...deleteFavoriteProductSchema
       },
       preHandler: fastify.authenticate,
-      handler: clientController.deleteClient
+      handler: clientController.deleteFavoriteProduct
     }
   );
 };

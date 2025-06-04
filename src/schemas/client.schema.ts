@@ -52,10 +52,10 @@ export const getClientByIdSchema = {
 
   params: {
     type: 'object',
+    required: ['id'],
     properties: {
       id: { type: 'number' }
-    },
-    required: ['id']
+    }
   },
 
   response: {
@@ -125,10 +125,10 @@ export const updateClientSchema = {
 
   params: {
     type: 'object',
+    required: ['id'],
     properties: {
       id: { type: 'number' }
-    },
-    required: ['id']
+    }
   },
 
   body: {
@@ -173,10 +173,10 @@ export const updateClientStatusSchema = {
 
   params: {
     type: 'object',
+    required: ['id'],
     properties: {
       id: { type: 'number' }
-    },
-    required: ['id']
+    }
   },
 
   body: {
@@ -186,6 +186,34 @@ export const updateClientStatusSchema = {
       status: {
         type: 'boolean',
       }
+    }
+  },
+
+  response: {
+    200: {
+      type: 'null',
+      description: "OK",
+    },
+    404: {
+      type: 'object',
+      description: "Not Found",
+      properties: {
+        message: { type: 'string' },
+        code: { type: 'string' }
+      }
+    },
+    ...commonResponseSchema
+  }
+};
+
+export const deleteClientSchema = {
+  ...commonHeaderAuthorizationSchema,
+
+  params: {
+    type: 'object',
+    required: ['id'],
+    properties: {
+      id: { type: 'number' }
     }
   },
 
@@ -237,15 +265,15 @@ export const favoriteProductSchema = {
   }
 };
 
-export const deleteClientSchema = {
+export const deleteFavoriteProductSchema = {
   ...commonHeaderAuthorizationSchema,
 
   params: {
     type: 'object',
+    required: ['productId'],
     properties: {
-      id: { type: 'number' }
-    },
-    required: ['id']
+      productId: { type: 'number' }
+    }
   },
 
   response: {

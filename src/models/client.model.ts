@@ -61,17 +61,6 @@ export async function getClientById(id: number) {
   return rows[0];
 };
 
-export async function checkIfProductAlreadyFavorite(clientId: number, productId: number) {
-  const { rows } = await app.connection.query(
-     `
-      SELECT * FROM client_favorite_product WHERE client_id = $1 AND product_id = $2
-    `,
-    [clientId, productId]
-  );
-
-  return rows[0];
-};
-
 export async function clientCredentials(email: string) {
   const { rows } = await app.connection.query(
     `
@@ -102,6 +91,20 @@ export async function checkIfEmailAlreadyExists(email: string) {
   );
 
   return rowCount;
+};
+
+export async function checkIfProductAlreadyFavorite(clientId: number, productId: number) {
+  const { rows } = await app.connection.query(
+     `
+      SELECT
+        cfp.id
+      FROM client_favorite_product AS cfp
+      WHERE client_id = $1 AND product_id = $2
+    `,
+    [clientId, productId]
+  );
+
+  return rows[0];
 };
 
 export async function createClient(body: ICreateClientBody) {
@@ -176,5 +179,14 @@ export async function deleteClient(id: number) {
       DELETE FROM client WHERE id = $1;
     `,
     [id]
+  );
+};
+
+export async function deleteFavoriteProduct(clientId: number, productId: number) {
+  await app.connection.query(
+    `
+      DELETE FROM client_favorite_product WHERE client_id = $1 AND product_id = $2;
+    `,
+    [clientId, productId]
   );
 };

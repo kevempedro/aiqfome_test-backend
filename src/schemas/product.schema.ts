@@ -49,10 +49,10 @@ export const getProductByIdSchema = {
 
   params: {
     type: 'object',
+    required: ['id'],
     properties: {
       id: { type: 'number' }
-    },
-    required: ['id']
+    }
   },
 
   response: {
